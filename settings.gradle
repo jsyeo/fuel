@@ -1,0 +1,12 @@
+include ':fuel',
+        ':fuel-android',
+        ':fuel-coroutines',
+        ':fuel-forge',
+        ':fuel-gson',
+        ':fuel-jackson',
+        ':fuel-livedata',
+        ':fuel-moshi',
+        ':fuel-protobuf',
+        ':fuel-rxjava',
+        ':sample',
+        ':sample-java'
