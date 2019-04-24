@@ -30,6 +30,7 @@ val projects = listOf(
         Fuel.KotlinSerialization.name,
         Fuel.LiveData.name,
         Fuel.Moshi.name,
+        Fuel.Protobuf.name,
         Fuel.Reactor.name,
         Fuel.RxJava.name,
         Fuel.Stetho.name,

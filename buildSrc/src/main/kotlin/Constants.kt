@@ -44,6 +44,10 @@ object Fuel {
         const val name = ":fuel-moshi"
     }
 
+    object Protobuf {
+        const val name = ":fuel-protobuf"
+    }
+
     object Reactor {
         const val name = ":fuel-reactor"
     }

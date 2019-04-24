@@ -4,13 +4,10 @@ import com.google.protobuf.gradle.ProtobufConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
-    kotlin("jvm")
-
-    jacoco
     id("com.google.protobuf")
 }
 
-java.sourceSets["test"].withConvention(KotlinSourceSet::class) {
+sourceSets["test"].withConvention(KotlinSourceSet::class) {
     kotlin.srcDir("${project.buildDir}/gen/main/javalite")
 }
 
