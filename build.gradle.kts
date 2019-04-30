@@ -12,6 +12,7 @@ plugins {
     id(Jacoco.Android.plugin) version Jacoco.Android.version apply false
     id(KotlinX.Serialization.plugin) version Kotlin.version apply false
     id(Ktlint.plugin) version Ktlint.version apply false
+    id(Protobuf.plugin) version Protobuf.version apply false
 
     `maven-publish`
     id(Release.Bintray.plugin) version Release.Bintray.version

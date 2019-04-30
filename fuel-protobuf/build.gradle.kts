@@ -1,52 +1,40 @@
-import com.google.protobuf.gradle.ExecutableLocator
-import com.google.protobuf.gradle.GenerateProtoTask
-import com.google.protobuf.gradle.ProtobufConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import com.google.protobuf.gradle.*
 
 plugins {
-    id("com.google.protobuf")
+    id(Protobuf.plugin)
 }
 
-sourceSets["test"].withConvention(KotlinSourceSet::class) {
-    kotlin.srcDir("${project.buildDir}/gen/main/javalite")
+sourceSets {
+    getByName("test").java.srcDirs("${project.buildDir}/generated/source/proto/main/javalite")
 }
 
-protobuf.protobuf.run {
+protobuf {
+    protoc {
+        // The artifact spec for the Protobuf Compiler
+        artifact = "com.google.protobuf:protoc:3.6.1"
+    }
 
-    generatedFilesBaseDir = "${project.buildDir}/gen"
+    plugins {
+        id("javalite") {
+            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+        }
+    }
 
-    protoc(delegateClosureOf<ExecutableLocator> {
-        artifact = "com.google.protobuf:protoc:3.5.1-1"
-    })
-
-    plugins(delegateClosureOf<NamedDomainObjectContainer<ExecutableLocator>> {
-        this {
-            "javalite" {
-                artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+    generateProtoTasks {
+        all().forEach {
+            it.builtins {
+                remove("java")
+            }
+            it.plugins {
+                id("javalite")
             }
         }
-    })
-
-    generateProtoTasks(delegateClosureOf<ProtobufConfigurator.GenerateProtoTaskCollection> {
-        all().forEach {
-            it.plugins(delegateClosureOf<NamedDomainObjectContainer<GenerateProtoTask.PluginOptions>> {
-                this {
-                    "javalite"()
-                }
-            })
-
-            it.builtins(delegateClosureOf<NamedDomainObjectContainer<GenerateProtoTask.PluginOptions>> {
-                this {
-                    remove("java"())
-                }
-            })
-        }
-    })
+    }
 }
 
 dependencies {
     api(project(":fuel"))
 
     implementation("com.google.protobuf:protobuf-lite:3.0.1")
-    protobuf("com.google.protobuf:protobuf-java:3.5.1")
+    protobuf("com.google.protobuf:protobuf-java:3.6.1")
 }

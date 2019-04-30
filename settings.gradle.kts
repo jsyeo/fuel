@@ -16,6 +16,9 @@ pluginManagement {
             if (requested.id.id == KotlinX.Serialization.plugin) {
                 useModule("org.jetbrains.kotlin:kotlin-serialization:${requested.version}")
             }
+            if (requested.id.id == Protobuf.plugin) {
+                useModule("com.google.protobuf:protobuf-gradle-plugin:${requested.version}")
+            }
         }
     }
 }

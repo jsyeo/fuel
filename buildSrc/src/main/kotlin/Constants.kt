@@ -79,6 +79,8 @@ object Result {
     const val dependency = "com.github.kittinunf.result:result:$version"
 }
 
+// Modules dependencies
+
 object Json {
     const val version = "20170516"
     const val dependency = "org.json:json:$version"
@@ -119,7 +121,6 @@ object AndroidX {
     }
 }
 
-// Modules dependencies
 object Forge {
     const val version = "0.3.0"
     const val dependency = "com.github.kittinunf.forge:forge:$version"
@@ -170,6 +171,11 @@ object RxJava {
         const val version = "2.1.0"
         const val dependency = "io.reactivex.rxjava2:rxandroid:$version"
     }
+}
+
+object Protobuf {
+    const val version = "0.8.8"
+    const val plugin = "com.google.protobuf"
 }
 
 // Lint

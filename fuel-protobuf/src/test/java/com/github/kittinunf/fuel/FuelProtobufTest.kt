@@ -3,26 +3,26 @@ package com.github.kittinunf.fuel
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.protobuf.request
 import com.github.kittinunf.fuel.protobuf.responseObject
-import grpc.gateway.examples.examplepb.ABitOfEverythingOuterClass
+import grpcbin.Grpcbin.DummyMessage
 import org.junit.Test
-import java.util.UUID
 
 class FuelProtobufTest {
 
-    private val manager = FuelManager().apply { basePath = "https://grpcb.in" }
+    private val manager = FuelManager().apply { basePath = "http://grpcb.in:9000" }
 
     init {
     }
 
     @Test
-    fun testIndex() {
-        val uuid = UUID.randomUUID()
-        val builder = ABitOfEverythingOuterClass.ABitOfEverything.newBuilder().setUuid(uuid.toString())
+    fun grpcbinDummy() {
+        val builder = DummyMessage.newBuilder().setFFloat(3.2f)
+                .setFString("hello-world").setFInt32(42)
+
         val (req, res, result) =
-                manager.request("v1/example/a_bit_of_everythin", builder)
-                        .responseObject(ABitOfEverythingOuterClass.ABitOfEverything.parser())
+                manager.request("dummyUnary", builder)
+                        .responseObject(DummyMessage.parser())
         println(req)
         println(res)
-        println(result)
+        println(result.get().fFloat)
     }
 }

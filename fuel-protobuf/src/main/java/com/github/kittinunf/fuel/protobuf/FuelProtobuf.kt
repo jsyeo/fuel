@@ -1,9 +1,9 @@
 package com.github.kittinunf.fuel.protobuf
 
-import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.Request
+import com.github.kittinunf.fuel.core.RequestFactory
 import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.github.kittinunf.fuel.core.response
 import com.github.kittinunf.fuel.util.FuelRouting
@@ -21,11 +21,11 @@ fun FuelManager.request(path: String, builder: MessageLite.Builder) =
             body(body)
         }
 
-fun FuelManager.request(pathStringConvertible: Fuel.PathStringConvertible, builder: MessageLite.Builder) =
+fun FuelManager.request(pathStringConvertible: RequestFactory.PathStringConvertible, builder: MessageLite.Builder) =
         request(pathStringConvertible.path, builder)
 
 // FuelRouting
-interface FuelProtobufRouting : FuelRouting {
+interface ProtobufFuelRouting : FuelRouting {
 
     override val method: Method
         get() = Method.POST
