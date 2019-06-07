@@ -9,7 +9,6 @@ import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.core.requests.DefaultBody
-import com.github.kittinunf.fuel.core.requests.isCancelled
 import com.github.kittinunf.fuel.util.ProgressInputStream
 import com.github.kittinunf.fuel.util.ProgressOutputStream
 import com.github.kittinunf.fuel.util.decode
@@ -17,7 +16,6 @@ import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
-import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.Proxy
 import java.net.URLConnection
@@ -33,34 +31,7 @@ class HttpClient(
     var decodeContent: Boolean = true,
     var hook: Client.Hook
 ) : Client {
-    override fun executeRequest(request: Request): Response {
-        return try {
-            doRequest(request)
-        } catch (exception: Exception) {
-            throw FuelError.wrap(exception, Response(request.url))
-        } finally {
-            // As per Android documentation, a connection that is not explicitly disconnected
-            // will be pooled and reused!  So, don't close it as we need inputStream later!
-            // connection.disconnect()
-        }
-    }
-
-    @Throws(InterruptedException::class)
-    private fun ensureRequestActive(request: Request, connection: HttpURLConnection? = null) {
-        val cancelled = request.isCancelled
-        if (!cancelled && !Thread.currentThread().isInterrupted) {
-            return
-        }
-
-        // Flush all the pipes. This is necessary because we don't want the other end to wait for a timeout or hang.
-        // This interrupts the connection correctly and makes the connection available later. This does break any
-        // keep-alive on this particular connection
-        connection?.disconnect()
-
-        throw InterruptedException("[HttpClient] could not ensure Request was active: cancelled=$cancelled")
-    }
-
-    override suspend fun awaitRequest(request: Request): Response = suspendCoroutine { continuation ->
+    override suspend fun executeRequest(request: Request): Response = suspendCoroutine { continuation ->
         try {
             continuation.resume(doRequest(request))
         } catch (exception: Exception) {
@@ -68,16 +39,15 @@ class HttpClient(
         }
     }
 
-    @Throws
+    @Throws(IOException::class)
     private fun doRequest(request: Request): Response {
         val connection = establishConnection(request) as HttpURLConnection
         sendRequest(request, connection)
         return retrieveResponse(request, connection)
     }
 
-    @Throws(InterruptedException::class)
+    @Throws(IOException::class)
     private fun sendRequest(request: Request, connection: HttpURLConnection) {
-        ensureRequestActive(request, connection)
         connection.apply {
             connectTimeout = max(request.executionOptions.timeoutInMillisecond, 0)
             readTimeout = max(request.executionOptions.timeoutReadInMillisecond, 0)
@@ -122,10 +92,8 @@ class HttpClient(
         }
     }
 
-    @Throws
+    @Throws(IOException::class)
     private fun retrieveResponse(request: Request, connection: HttpURLConnection): Response {
-        ensureRequestActive(request, connection)
-
         hook.postConnect(request)
 
         val headers = Headers.from(connection.headerFields)
@@ -174,11 +142,9 @@ class HttpClient(
 
         val contentStream = dataStream(request, connection)?.decode(transferEncoding) ?: ByteArrayInputStream(ByteArray(0))
         val inputStream = if (shouldDecode && contentEncoding != null) contentStream.decode(contentEncoding) else contentStream
-        val cancellationConnection = WeakReference<HttpURLConnection>(connection)
         val progressStream = ProgressInputStream(
             inputStream, onProgress = { readBytes ->
                 request.executionOptions.responseProgress(readBytes, contentLength ?: readBytes)
-                ensureRequestActive(request, cancellationConnection.get())
             }
         )
 
@@ -262,7 +228,6 @@ class HttpClient(
                 connection.outputStream,
                 onProgress = { writtenBytes ->
                     request.executionOptions.requestProgress(writtenBytes, totalBytes ?: writtenBytes)
-                    ensureRequestActive(request, connection)
                 }
             ).buffered(FuelManager.progressBufferSize)
         )

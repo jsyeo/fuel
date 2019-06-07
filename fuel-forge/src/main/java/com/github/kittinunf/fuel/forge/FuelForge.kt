@@ -12,20 +12,22 @@ import com.github.kittinunf.fuel.core.response
 import com.github.kittinunf.result.Result
 
 inline fun <reified T : Any> Request.responseObject(noinline deserializer: JSON.() -> DeserializedResult<T>, noinline handler: (Request, Response, Result<T, FuelError>) -> Unit) =
-        response(forgeDeserializerOf(deserializer), handler)
+    response(forgeDeserializerOf(deserializer), handler)
 
 inline fun <reified T : Any> Request.responseObjects(noinline deserializer: JSON.() -> DeserializedResult<T>, noinline handler: (Request, Response, Result<List<T>, FuelError>) -> Unit) =
-        response(forgesDeserializerOf(deserializer), handler)
+    response(forgesDeserializerOf(deserializer), handler)
 
 inline fun <reified T : Any> Request.responseObject(noinline deserializer: JSON.() -> DeserializedResult<T>, handler: ResponseHandler<T>) =
-        response(forgeDeserializerOf(deserializer), handler)
+    response(forgeDeserializerOf(deserializer), handler)
 
 inline fun <reified T : Any> Request.responseObjects(noinline deserializer: JSON.() -> DeserializedResult<T>, handler: ResponseHandler<List<T>>) =
-        response(forgesDeserializerOf(deserializer), handler)
+    response(forgesDeserializerOf(deserializer), handler)
 
-inline fun <reified T : Any> Request.responseObject(noinline deserializer: JSON.() -> DeserializedResult<T>) = response(forgeDeserializerOf(deserializer))
+inline fun <reified T : Any> Request.responseObject(noinline deserializer: JSON.() -> DeserializedResult<T>) =
+    response(forgeDeserializerOf(deserializer))
 
-inline fun <reified T : Any> Request.responseObjects(noinline deserializer: JSON.() -> DeserializedResult<T>) = response(forgesDeserializerOf(deserializer))
+inline fun <reified T : Any> Request.responseObjects(noinline deserializer: JSON.() -> DeserializedResult<T>) =
+    response(forgesDeserializerOf(deserializer))
 
 fun <T : Any> forgeDeserializerOf(deserializer: JSON.() -> DeserializedResult<T>) = object : ResponseDeserializable<T> {
     override fun deserialize(content: String): T? = Forge.modelFromJson(content, deserializer).component1()

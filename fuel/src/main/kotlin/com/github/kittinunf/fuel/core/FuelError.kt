@@ -1,7 +1,5 @@
 package com.github.kittinunf.fuel.core
 
-import java.io.InterruptedIOException
-
 private typealias StackTrace = Array<out StackTraceElement>
 
 /**
@@ -70,14 +68,6 @@ open class FuelError internal constructor(
      * @return [ByteArray] the error data
      */
     val errorData: ByteArray get() = response.data
-
-    /**
-     * Returns if this [FuelError] was caused by an interruption
-     * @return [Boolean] true if it was, false otherwise
-     */
-    val causedByInterruption: Boolean get() =
-        exception is InterruptedException ||
-        exception is InterruptedIOException
 
     companion object {
         fun wrap(it: Throwable, response: Response = Response.error()): FuelError = when (it) {

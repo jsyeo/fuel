@@ -20,25 +20,15 @@ pluginManagement {
     }
 }
 val projects = listOf(
-        Fuel.name,
-        Fuel.Android.name,
-        Fuel.Coroutines.name,
-        Fuel.Forge.name,
-        Fuel.Gson.name,
-        Fuel.Jackson.name,
-        Fuel.Json.name,
-        Fuel.KotlinSerialization.name,
-        Fuel.LiveData.name,
-        Fuel.Moshi.name,
-        Fuel.Reactor.name,
-        Fuel.RxJava.name,
-        Fuel.Stetho.name,
-        Fuel.Test.name
+    Fuel.name,
+    Fuel.Forge.name,
+    Fuel.Gson.name,
+    Fuel.Jackson.name,
+    Fuel.Json.name,
+    Fuel.KotlinSerialization.name,
+    Fuel.Moshi.name,
+    Fuel.Stetho.name,
+    Fuel.Test.name
 )
 
 include(*(projects.toTypedArray()))
-
-val includeSample: String by settings
-if (includeSample == "true") {
-    include(":sample")
-}

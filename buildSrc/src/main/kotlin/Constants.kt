@@ -1,20 +1,12 @@
 // Library version
 object Fuel {
-    const val publishVersion = "2.1.0"
+    const val publishVersion = "3.0.0"
     const val groupId = "com.github.kittinunf.fuel"
 
     const val compileSdkVersion = 28
     const val minSdkVersion = 19
 
     const val name = ":fuel"
-
-    object Android {
-        const val name = ":fuel-android"
-    }
-
-    object Coroutines {
-        const val name = ":fuel-coroutines"
-    }
 
     object Forge {
         const val name = ":fuel-forge"
@@ -36,20 +28,8 @@ object Fuel {
         const val name = ":fuel-kotlinx-serialization"
     }
 
-    object LiveData {
-        const val name = ":fuel-livedata"
-    }
-
     object Moshi {
         const val name = ":fuel-moshi"
-    }
-
-    object Reactor {
-        const val name = ":fuel-reactor"
-    }
-
-    object RxJava {
-        const val name = ":fuel-rxjava"
     }
 
     object Stetho {
@@ -59,11 +39,15 @@ object Fuel {
     object Test {
         const val name = ":fuel-test"
     }
+
+    object Sample {
+    	const val name = ":sample"
+    }
 }
 
 // Core dependencies
 object Kotlin {
-    const val version = "1.3.30"
+    const val version = "1.3.31"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$version"
     const val plugin = "kotlin"
     const val androidPlugin = "kotlin-android"
@@ -81,7 +65,7 @@ object Json {
 }
 
 object Android {
-    const val version = "3.4.0"
+    const val version = "3.4.1"
     const val appPlugin = "com.android.application"
     const val libPlugin = "com.android.library"
 
@@ -92,7 +76,7 @@ object Android {
 }
 
 object AndroidX {
-    val annotation = "androidx.annotation:annotation:1.0.0"
+    val annotation = "androidx.annotation:annotation:1.1.0"
     val appCompat = "androidx.appcompat:appcompat:1.0.2"
 
     object Arch {
@@ -108,10 +92,10 @@ object AndroidX {
 
     // Testing dependencies
     object Test {
-        const val rulesVersion = "1.1.0"
-        const val junitVersion = "1.0.0"
+        const val rulesVersion = "1.2.0"
+        const val junitVersion = "1.1.1"
         const val rules = "androidx.test:rules:$rulesVersion"
-        const val junit = "androidx.test.ext:junit:$junitVersion"
+        const val junit = "androidx.test.ext:junit-ktx:$junitVersion"
     }
 }
 
@@ -133,13 +117,13 @@ object Jackson {
 
 object KotlinX {
     object Coroutines {
-        const val version = "1.2.1"
+        const val version = "1.3.0-M1"
         val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
         val jvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
     }
 
     object Serialization {
-        const val version = "0.10.0"
+        const val version = "0.11.0"
         const val dependency = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$version"
         const val plugin = "kotlinx-serialization"
     }
@@ -148,24 +132,6 @@ object KotlinX {
 object Moshi {
     const val version = "1.8.0"
     const val dependency = "com.squareup.moshi:moshi:$version"
-}
-
-object Reactor {
-    const val version = "3.2.8.RELEASE"
-    const val core = "io.projectreactor:reactor-core:$version"
-    const val test = "io.projectreactor:reactor-test:$version"
-}
-
-object RxJava {
-    object Jvm {
-        const val version = "2.2.8"
-        const val dependency = "io.reactivex.rxjava2:rxjava:$version"
-    }
-
-    object Android {
-        const val version = "2.1.0"
-        const val dependency = "io.reactivex.rxjava2:rxandroid:$version"
-    }
 }
 
 // Lint

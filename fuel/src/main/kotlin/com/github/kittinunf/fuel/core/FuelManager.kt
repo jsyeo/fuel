@@ -4,7 +4,7 @@ import com.github.kittinunf.fuel.core.Client.Hook
 import com.github.kittinunf.fuel.core.RequestFactory.PathStringConvertible
 import com.github.kittinunf.fuel.core.RequestFactory.RequestConvertible
 import com.github.kittinunf.fuel.core.interceptors.ParameterEncoder
-import com.github.kittinunf.fuel.core.interceptors.redirectResponseInterceptor
+// import com.github.kittinunf.fuel.core.interceptors.redirectResponseInterceptor
 import com.github.kittinunf.fuel.core.requests.DownloadRequest
 import com.github.kittinunf.fuel.core.requests.UploadRequest
 import com.github.kittinunf.fuel.core.requests.download
@@ -13,9 +13,6 @@ import com.github.kittinunf.fuel.toolbox.HttpClient
 import com.github.kittinunf.fuel.util.readWriteLazy
 import java.net.Proxy
 import java.security.KeyStore
-import java.util.concurrent.Executor
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
@@ -53,23 +50,10 @@ class FuelManager : RequestFactory, RequestFactory.Convenience {
         HttpsURLConnection.getDefaultHostnameVerifier()
     }
 
-    // background executionOptions
-    var executorService: ExecutorService by readWriteLazy {
-        Executors.newCachedThreadPool { command ->
-            Thread(command).also { thread ->
-                thread.priority = Thread.NORM_PRIORITY
-                thread.isDaemon = true
-            }
-        }
-    }
-
     private val requestInterceptors: MutableList<FoldableRequestInterceptor> =
             mutableListOf(ParameterEncoder)
     private val responseInterceptors: MutableList<FoldableResponseInterceptor> =
-            mutableListOf(redirectResponseInterceptor(this))
-
-    // callback executionOptions
-    var callbackExecutor: Executor by readWriteLazy { createEnvironment().callbackExecutor }
+            mutableListOf()
 
     /**
      * Make a request using [method] to [path] with [parameters]
@@ -193,10 +177,8 @@ class FuelManager : RequestFactory, RequestFactory.Convenience {
                 client = client,
                 socketFactory = socketFactory,
                 hostnameVerifier = hostnameVerifier,
-                callbackExecutor = callbackExecutor,
                 requestTransformer = requestInterceptors.foldRight({ r: Request -> r }) { f, acc -> f(acc) },
-                responseTransformer = responseInterceptors.foldRight({ _: Request, res: Response -> res }) { f, acc -> f(acc) },
-                executorService = executorService
+                responseTransformer = responseInterceptors.foldRight({ _: Request, res: Response -> res }) { f, acc -> f(acc) }
             ).also { executor ->
                 executor.timeoutInMillisecond = timeoutInMillisecond
                 executor.timeoutReadInMillisecond = timeoutReadInMillisecond
@@ -369,7 +351,6 @@ class FuelManager : RequestFactory, RequestFactory.Convenience {
         keystore = clean.keystore
         socketFactory = clean.socketFactory
         hostnameVerifier = clean.hostnameVerifier
-        executorService = clean.executorService
         requestInterceptors.apply {
             clear()
             addAll(clean.requestInterceptors)
@@ -378,7 +359,6 @@ class FuelManager : RequestFactory, RequestFactory.Convenience {
             clear()
             addAll(clean.responseInterceptors)
         }
-        callbackExecutor = clean.callbackExecutor
 
         return this
     }

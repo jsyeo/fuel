@@ -1,13 +1,10 @@
 package com.github.kittinunf.fuel.core.requests
 
-import com.github.kittinunf.fuel.core.Blob
 import com.github.kittinunf.fuel.core.DataPart
 import com.github.kittinunf.fuel.core.Headers
 import com.github.kittinunf.fuel.core.LazyDataPart
 import com.github.kittinunf.fuel.core.ProgressCallback
 import com.github.kittinunf.fuel.core.Request
-import java.io.File
-import java.net.URL
 import java.util.UUID
 
 class UploadRequest private constructor(private val wrapped: Request) : Request by wrapped {
@@ -93,33 +90,6 @@ class UploadRequest private constructor(private val wrapped: Request) : Request 
                     .apply { this.ensureBoundary() }
             } as UploadRequest
     }
-
-    @Deprecated("Use request.add({ BlobDataPart(...) }, { ... }, ...) instead", ReplaceWith(""), DeprecationLevel.ERROR)
-    fun blobs(@Suppress("DEPRECATION") blobsCallback: (Request, URL) -> Iterable<Blob>): UploadRequest =
-        throw NotImplementedError("request.blobs has been removed. Use request.add({ BlobDataPart(...) }, { ... }, ...) instead.")
-
-    @Deprecated("Use request.add { BlobDataPart(...) } instead", ReplaceWith("add(blobsCallback)"))
-    fun blob(@Suppress("DEPRECATION") blobCallback: (Request, URL) -> Blob): UploadRequest =
-        throw NotImplementedError("request.blob has been removed. Use request.add { BlobDataPart(...) } instead.")
-
-    @Deprecated("Use request.add({ ... }, { ... }, ...) instead", ReplaceWith(""), DeprecationLevel.ERROR)
-    fun dataParts(dataPartsCallback: (Request, URL) -> Iterable<DataPart>): UploadRequest =
-        throw NotImplementedError("request.dataParts has been removed. Use request.add { XXXDataPart(...) } instead.")
-
-    @Deprecated("Use request.add({ FileDataPart(...) }, { ... }, ...) instead", ReplaceWith(""), DeprecationLevel.ERROR)
-    fun sources(sourcesCallback: (Request, URL) -> Iterable<File>): UploadRequest =
-        throw NotImplementedError("request.sources has been removed. Use request.add({ BlobDataPart(...) }, { ... }, ...) instead.")
-
-    @Deprecated("Use request.add { FileDataPart(...)} instead", ReplaceWith("add(sourceCallback)"), DeprecationLevel.ERROR)
-    fun source(sourceCallback: (Request, URL) -> File): UploadRequest =
-        throw NotImplementedError("request.source has been removed. Use request.add { FileDataPart(...) } instead.")
-
-    @Deprecated("Set the name via DataPart (FileDataPart, InlineDataPart, BlobDataPart) instead", ReplaceWith(""), DeprecationLevel.ERROR)
-    fun name(nameCallback: () -> String): UploadRequest =
-        throw NotImplementedError("request.name has been removed. Set the name via DataPart (FileDataPart, InlineDataPart, BlobDataPart) instead")
-
-    @Deprecated("Set the name via DataPart (FileDataPart, InlineDataPart, BlobDataPart) instead", ReplaceWith(""), DeprecationLevel.ERROR)
-    fun name(newName: String): UploadRequest =
-        throw NotImplementedError("request.name has been removed. Set the name via DataPart (FileDataPart, InlineDataPart, BlobDataPart) instead")
 }
+
 fun Request.upload(): UploadRequest = UploadRequest.enableFor(this)

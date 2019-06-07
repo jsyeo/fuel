@@ -165,7 +165,7 @@ data class FileDataPart(
     val file: File,
     val name: String = file.nameWithoutExtension,
     val filename: String? = file.name,
-    override val contentType: String = FileDataPart.guessContentType(file),
+    override val contentType: String = guessContentType(file),
     // For form data that represents the content of a file, a name for the
     //   file SHOULD be supplied as well, by using a "filename" parameter of
     //   the Content-Disposition header field.  The file name isn't mandatory
@@ -181,7 +181,7 @@ data class FileDataPart(
     companion object {
         fun guessContentType(file: File) = try {
             URLConnection.guessContentTypeFromName(file.name)
-                ?: BlobDataPart.guessContentType(file.inputStream())
+                ?: guessContentType(file.inputStream())
         } catch (ex: NoClassDefFoundError) {
             // The MimetypesFileTypeMap class doesn't exists on old Android devices.
             GENERIC_BYTE_CONTENT
@@ -268,7 +268,7 @@ data class BlobDataPart(
     val name: String,
     val filename: String? = null,
     override val contentLength: Long? = null,
-    override val contentType: String = BlobDataPart.guessContentType(inputStream),
+    override val contentType: String = guessContentType(inputStream),
     override val contentDisposition: String = "form-data; name=\"$name\"${if (filename != null) "; filename=\"$filename\"" else "" }"
 ) : DataPart() {
     override fun inputStream() = inputStream

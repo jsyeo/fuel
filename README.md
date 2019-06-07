@@ -4,9 +4,9 @@
 [![Build Status](https://travis-ci.org/kittinunf/fuel.svg?branch=master)](https://travis-ci.org/kittinunf/fuel)
 [![Codecov](https://codecov.io/github/kittinunf/fuel/coverage.svg?branch=master)](https://codecov.io/gh/kittinunf/fuel)
 
-The easiest HTTP networking library for Kotlin/Android.
+The easiest HTTP networking library for Kotlin/Android. It relies on coroutines on JVM platforms.
 
-> You are looking at the documentation for **2.x.y.**. If you are looking for the documentation for **1.x.y**, checkout [the 1.16.0 README.md](https://github.com/kittinunf/Fuel/blob/1.16.0/README.md)
+> You are looking at the documentation for **3.x.y.**. If you are looking for the documentation for **1.x.y**, checkout [the 1.16.0 README.md](https://github.com/kittinunf/Fuel/blob/1.16.0/README.md)
 
 ## Features
 
@@ -14,10 +14,8 @@ The easiest HTTP networking library for Kotlin/Android.
 - [x] Asynchronous and blocking requests
 - [x] Download as a file
 - [x] Upload files, `Blob`s, `DataPart`s as `multipart/form-data`
-- [x] Cancel asynchronous request
 - [x] Debug logging / convert to cUrl call
 - [x] Deserialization into POJO / POKO
-- [x] Requests as [coroutines](https://github.com/Kotlin/kotlinx.coroutines)
 - [x] API Routing
 
 ## Installation
@@ -42,17 +40,12 @@ Each of the extensions / integrations has to be installed separately.
 | Package | Description |
 |----------|---------|
 | [`fuel`](./fuel) | Core package |
-| [`fuel-android`](./fuel-android) |  _Android_: Automatically invoke handler on Main Thread when using Android Module |
-| [`fuel-coroutines`](./fuel-coroutines) | _KotlinX_: Execution with [coroutines](https://github.com/Kotlin/kotlinx.coroutines) |
 | [`fuel-forge`](./fuel-forge) | _Deserialization_: [`Forge`](https://github.com/kittinunf/Forge/) |
 | [`fuel-gson`](./fuel-gson) | _(De)serialization_: [`Gson`](https://github.com/google/gson) |
 | [`fuel-jackson`](./fuel-jackson) | _Deserialization_: [`Jackson`](https://github.com/FasterXML/jackson-module-kotlin)
 | [`fuel-json`](/fuel-json) | _Deserialization_: [`Json`](http://www.json.org/) |
 | [`fuel-kotlinx-serialization`](/fuel-kotlinx-serialization) | _(De)serialization_: [`KotlinX Serialization`](https://github.com/Kotlin/kotlinx.serialization) |
-| [`fuel-livedata`](./fuel-livedata) | _Android Architectures_: Responses as [`LiveData`](https://developer.android.com/topic/libraries/architecture/livedata.html) |
 | [`fuel-moshi`](./fuel-moshi) | _Deserialization_: [`Moshi`](https://github.com/square/moshi)  |
-| [`fuel-reactor`](./fuel-reactor) | _Reactive Programming_: Responses as [`Mono`](https://projectreactor.io/docs/core/release/reference/#mono) (**Project Reactor 3.x**)
-| [`fuel-rxjava`](./fuel-rxjava) | _Reactive Programming_: Responses as [`Single`](http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Single.html) (**RxJava 2.x**)
 | [`fuel-stetho`](./fuel-stetho) | _Utility_: Debug utility for Android on Chrome Developer Tools, [`Stetho`](https://github.com/facebook/stetho)
 
 ### Jitpack
@@ -92,7 +85,7 @@ dependencies {
 - `group` is made up of `com.github` as well as username and project name
 
 - `name` is the subproject, this may be any of the packages listed in the [installation instructions](https://github.com/kittinunf/fuel#installation)
-eg. `fuel`, `fuel-coroutines`, `fuel-kotlinx-serialization`, etc
+eg. `fuel`, `fuel-kotlinx-serialization`, etc
 - `version` can be the latest `master-SMAPSHOT` or `-SNAPSHOT` which always points at the HEAD or any other branch, tag or commit hash, e.g. as listed on [jitpack.io](https://jitpack.io/#kittinunf/fuel).
 
 We recommend _not_ using `SNAPSHOT` builds, but a specific commit in a specific branch (like a commit on master), because your build will then be stable.
@@ -146,13 +139,6 @@ Check each of the packages documentations or the Wiki for more features, usages 
 
 ### Basic functionality
 - [`fuel`: Basic usage](./fuel/README.md)
-- [`fuel-android`: Android usage](./fuel-android/README.md)
-- [`fuel-coroutines`: Execution with coroutines](./fuel-coroutines/README.md)
-
-### Responses
-- [`fuel-livedata`: Responses as LiveData](./fuel-livedata/README.md)
-- [`fuel-reactor`: Responses as Mono](./fuel-coroutines/README.md)
-- [`fuel-rxjava`: Responses as Single](./fuel-coroutines/README.md)
 
 ### (De)serialization
 - [`fuel-forge`: Deserialization with Forge](./fuel-forge/README.md)
@@ -164,7 +150,6 @@ Check each of the packages documentations or the Wiki for more features, usages 
 
 ### Utility
 - [`fuel-stetho` : Debugging bridge for Android with Stetho](./fuel-stetho/README.md)
-
 
 ## Other libraries
 

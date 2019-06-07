@@ -5,8 +5,7 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 
 interface Client {
-    fun executeRequest(request: Request): Response
-    suspend fun awaitRequest(request: Request): Response = executeRequest(request)
+    suspend fun executeRequest(request: Request): Response
 
     interface Hook {
         fun preConnect(connection: HttpURLConnection, request: Request)

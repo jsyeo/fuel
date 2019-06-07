@@ -1,11 +1,7 @@
 package com.github.kittinunf.fuel.core
 
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.requests.CancellableRequest
 import com.github.kittinunf.fuel.core.requests.DefaultBody
-import com.github.kittinunf.fuel.core.requests.RequestTaskCallbacks
 import com.github.kittinunf.fuel.core.requests.suspendable
-import com.github.kittinunf.fuel.core.requests.toTask
 import com.github.kittinunf.result.Result
 import com.github.kittinunf.result.getOrElse
 import com.github.kittinunf.result.map
@@ -89,123 +85,6 @@ interface ResponseDeserializable<out T : Any> : Deserializable<T> {
      * @return [T] deserialized instance of [T] or null when not applied
      */
     fun deserialize(content: String): T? = null
-}
-
-/**
- * Deserialize the [Response] to the [this] into a [T] using [U]
- *
- * @see ResponseResultHandler
- *
- * @param deserializable [U] the instance that performs deserialization
- * @param handler [ResponseResultHandler<T>] handler that has a [Result]
- * @return [CancellableRequest] the request that can be cancelled
- */
-fun <T : Any, U : Deserializable<T>> Request.response(deserializable: U, handler: ResponseResultHandler<T>): CancellableRequest =
-    response(deserializable,
-        { request, response, value -> handler(request, response, Result.Success(value)) },
-        { request, response, error -> handler(request, response, Result.Failure(error)) }
-    )
-
-/**
- * Deserialize the [Response] to the [this] into a [T] using [U]
- *
- * @see ResultHandler
- *
- * @param deserializable [U] the instance that performs deserialization
- * @param handler [ResultHandler<T>] handler that has a [Result]
- * @return [CancellableRequest] the request that can be cancelled
- */
-fun <T : Any, U : Deserializable<T>> Request.response(deserializable: U, handler: ResultHandler<T>): CancellableRequest =
-    response(deserializable,
-        { _, _, value -> handler(Result.Success(value)) },
-        { _, _, error -> handler(Result.Failure(error)) }
-    )
-
-/**
- * Deserialize the [Response] to the [this] into a [T] using [U]
- *
- * @see ResponseHandler
- *
- * @param deserializable [U] the instance that performs deserialization
- * @param handler [ResponseHandler<T>] handler that has dedicated paths for success and failure
- * @return [CancellableRequest] the request that can be cancelled
- */
-fun <T : Any, U : Deserializable<T>> Request.response(deserializable: U, handler: ResponseHandler<T>): CancellableRequest =
-    response(deserializable,
-        { request, response, value -> handler.success(request, response, value) },
-        { request, response, error -> handler.failure(request, response, error) }
-    )
-
-/**
- * Deserialize the [Response] to the [this] into a [T] using [U]
- *
- * @see Handler
- *
- * @param deserializable [U] the instance that performs deserialization
- * @param handler [Handler<T>] handler that has dedicated paths for success and failure
- * @return [CancellableRequest] the request that can be cancelled
- */
-fun <T : Any, U : Deserializable<T>> Request.response(deserializable: U, handler: Handler<T>): CancellableRequest =
-    response(deserializable,
-        { _, _, value -> handler.success(value) },
-        { _, _, error -> handler.failure(error) }
-    )
-
-/**
- * Deserialize the [Response] to the [this] into a [T] using [U]
- *
- * @note not async, use the variations with a handler instead.
- *
- * @throws Exception if there is an internal library error, not related to Network or Deserialization
- *
- * @param deserializable [U] the instance that performs deserialization
- * @return [ResponseResultOf<T>] the response result of
- */
-fun <T : Any, U : Deserializable<T>> Request.response(deserializable: U): ResponseResultOf<T> {
-    // First execute the network request and catch any issues
-    val rawResponse = runCatching { toTask().call() }
-        .onFailure { error ->
-            FuelError.wrap(error, Response.error(url)).also {
-                return Triple(this, it.response, Result.error(it))
-            }
-        }
-        .getOrThrow()
-
-    // By this time it should have a response, but deserialization might fail
-    return runCatching { Triple(this, rawResponse, Result.Success(deserializable.deserialize(rawResponse))) }
-        .recover { error -> Triple(this, rawResponse, Result.Failure(FuelError.wrap(error, rawResponse))) }
-        .getOrThrow()
-}
-
-private fun <T : Any, U : Deserializable<T>> Request.response(
-    deserializable: U,
-    success: (Request, Response, T) -> Unit,
-    failure: (Request, Response, FuelError) -> Unit
-): CancellableRequest {
-    val asyncRequest = RequestTaskCallbacks(
-        request = this,
-        onSuccess = { response ->
-            // The network succeeded but deserialization might fail
-            val deliverable = Result.of<T, Exception> { deserializable.deserialize(response) }
-            executionOptions.callback {
-                deliverable.fold(
-                    { success(this, response, it) },
-                    { failure(this, response, FuelError.wrap(it, response).also { error ->
-                        Fuel.trace { "[Deserializable] unfold failure: \n\r$error" } })
-                    }
-                )
-            }
-        },
-        onFailure = { error, response ->
-            executionOptions.callback {
-                failure(this, response, error.also { error ->
-                    Fuel.trace { "[Deserializable] callback failure: \n\r$error" }
-                })
-            }
-        }
-    )
-
-    return CancellableRequest.enableFor(this, future = executionOptions.submit(asyncRequest))
 }
 
 /**

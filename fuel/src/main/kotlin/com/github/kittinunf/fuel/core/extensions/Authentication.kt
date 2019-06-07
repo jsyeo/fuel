@@ -34,6 +34,3 @@ class AuthenticatedRequest(private val wrapped: Request) : Request by wrapped {
 }
 
 fun Request.authentication() = AuthenticatedRequest(this)
-
-@Deprecated("Use authentication() extension", replaceWith = ReplaceWith("authentication().basic(username, password)"))
-fun Request.authenticate(username: String, password: String) = authentication().basic(username, password)

@@ -26,7 +26,7 @@ allprojects {
     }
 }
 
-val androidModules = listOf("fuel-android", "fuel-livedata", "fuel-stetho")
+val androidModules = listOf("fuel-stetho")
 val androidSampleModules = listOf("sample")
 val testModules = listOf("fuel-test")
 
@@ -147,18 +147,6 @@ subprojects {
 
         configure<KotlinterExtension> {
             reporters = arrayOf(ReporterType.plain.name, ReporterType.checkstyle.name)
-        }
-
-        tasks.named<LintTask>("lintKotlinMain") {
-            enabled = false
-        }
-
-        tasks.named<LintTask>("lintKotlinTest") {
-            enabled = false
-        }
-
-        tasks.withType<Test> {
-            maxHeapSize = "4g"
         }
 
         dependencies {

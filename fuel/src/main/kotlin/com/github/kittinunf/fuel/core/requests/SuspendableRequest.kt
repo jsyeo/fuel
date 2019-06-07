@@ -8,17 +8,16 @@ import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.result.Result
 
 /**
- * Coroutine version of [RequestTask]. Turns a [Request] into an executable, suspendable, coroutine.
+ * Turns a [Request] into an executable, suspendable, coroutine.
  */
 class SuspendableRequest private constructor(private val wrapped: Request) : Request by wrapped {
-    private val interruptCallback by lazy { executor.interruptCallback }
     private val executor by lazy { request.executionOptions }
     private val client by lazy { executor.client }
 
     private fun prepareRequest(request: Request): Request = executor.requestTransformer(request)
 
     private suspend fun executeRequest(request: Request): Pair<Request, Response> {
-        return runCatching { Pair(request, client.awaitRequest(request)) }
+        return runCatching { Pair(request, client.executeRequest(request)) }
             .recover { error -> throw FuelError.wrap(error, Response(url)) }
             .getOrThrow()
     }
@@ -49,10 +48,6 @@ class SuspendableRequest private constructor(private val wrapped: Request) : Req
             }
             .onFailure { error ->
                 Fuel.trace { "[RequestTask] on failure ${(error as? FuelError)?.exception ?: error}" }
-                if (error is FuelError && error.causedByInterruption) {
-                    Fuel.trace { "[RequestTask] execution error\n\r\t$error" }
-                    interruptCallback.invoke(request)
-                }
             }
             .map { Result.Success(it) }
             .recover { Result.Failure(it as FuelError) }

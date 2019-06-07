@@ -5,5 +5,5 @@ import com.github.kittinunf.fuel.core.Response
 import java.nio.charset.Charset
 
 class StringDeserializer(private val charset: Charset = Charsets.UTF_8) : Deserializable<String> {
-    override fun deserialize(response: Response): String = String(response.data, charset)
+    override fun deserialize(response: Response): String = response.data.toString(charset)
 }

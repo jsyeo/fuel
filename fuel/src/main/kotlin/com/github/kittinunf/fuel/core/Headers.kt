@@ -89,7 +89,7 @@ class Headers : MutableMap<String, HeaderValues> {
      * @param value [Any] the value to append, coerced with [Any.toString]
      */
     fun append(header: String, value: Any): Headers {
-        return when (Headers.isSingleValue(header)) {
+        return when (isSingleValue(header)) {
             true -> set(header, value.toString())
             false -> set(header, this[header].plus(value.toString()))
         }
@@ -102,7 +102,7 @@ class Headers : MutableMap<String, HeaderValues> {
     override fun putAll(from: Map<out String, HeaderValues>) {
         // The call to [Headers.from] actually filters out invalid entries (duplicate headers which are isSingle), and
         // makes sure that multiple values for a single Header are all added (e.g. "foo" to "a", "foo" to "b").
-        Headers.from(from).forEach {
+        from(from).forEach {
             put(it.key, it.value)
         }
     }
@@ -145,7 +145,7 @@ class Headers : MutableMap<String, HeaderValues> {
     override fun get(key: String): HeaderValues {
         val header = HeaderName(key)
         return contents[header].orEmpty().let {
-            when (Headers.isSingleValue(header)) {
+            when (isSingleValue(header)) {
                 true -> listOfNotNull(it.lastOrNull())
                 false -> it
             }
@@ -186,7 +186,7 @@ class Headers : MutableMap<String, HeaderValues> {
     fun transformIterate(set: (key: String, value: String) -> Any?, add: (key: String, value: String) -> Any? = set) {
         for ((key, values) in this) {
             val header = HeaderName(key)
-            when (Headers.isCollapsible(header)) {
+            when (isCollapsible(header)) {
                 true ->
                     // From the [HttpURLConnection.setRequestProperty](https://docs.oracle.com/javase/7/docs/api/java/net/URLConnection.html#setRequestProperty(java.lang.String,%20java.lang.String))
                     //
@@ -195,8 +195,8 @@ class Headers : MutableMap<String, HeaderValues> {
                     //         to use a comma-separated list syntax which enables multiple
                     //         properties to be appended into a single property.
                     //
-                    set(key, Headers.collapse(header, values))
-                false -> when (Headers.isSingleValue(header)) {
+                    set(key, collapse(header, values))
+                false -> when (isSingleValue(header)) {
                     true -> values.lastOrNull()?.let { set(key, it) }
                     false -> values.forEach { add(key, it) }
                 }
@@ -290,9 +290,8 @@ class Headers : MutableMap<String, HeaderValues> {
                 //   java.lang.IllegalArgumentException: Parameter specified as non-null is null
                 //
                 val key = (entry.first as String?).orEmpty().ifBlank { null } ?: return@fold result
-                val value = entry.second
 
-                when (value) {
+                when (val value = entry.second) {
                     is Collection<*> -> {
                         val values = value.ifEmpty { null } ?: return@fold result
                         result.append(key, values.map { v -> v.toString() })

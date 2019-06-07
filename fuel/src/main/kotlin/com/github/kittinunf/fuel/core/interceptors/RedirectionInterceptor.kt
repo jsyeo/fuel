@@ -1,6 +1,6 @@
 package com.github.kittinunf.fuel.core.interceptors
 
-import com.github.kittinunf.fuel.core.Encoding
+/*import com.github.kittinunf.fuel.core.Encoding
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Headers
 import com.github.kittinunf.fuel.core.Method
@@ -9,15 +9,16 @@ import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.core.isStatusRedirection
 import java.net.URI
 import java.net.URL
-import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.HttpsURLConnection*/
 
-private val redirectStatusWithGets = listOf(
+/*private val redirectStatusWithGets = listOf(
     HttpsURLConnection.HTTP_MOVED_PERM,
     HttpsURLConnection.HTTP_MOVED_TEMP,
     HttpsURLConnection.HTTP_SEE_OTHER
-)
+)*/
 
-fun redirectResponseInterceptor(manager: FuelManager) =
+// TODO: Wondering about the Response Function on Line 61
+/*fun redirectResponseInterceptor(manager: FuelManager) =
     { next: (Request, Response) -> Response ->
         inner@{ request: Request, response: Response ->
             if (!response.isStatusRedirection || request.executionOptions.allowRedirects == false) {
@@ -59,4 +60,4 @@ fun redirectResponseInterceptor(manager: FuelManager) =
             // Redirect
             next(request, newRequest.response().second)
         }
-    }
+    }*/

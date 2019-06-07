@@ -25,10 +25,6 @@ class DownloadRequest private constructor(private val wrapped: Request) : Reques
         executionOptions += this::transformResponse
     }
 
-    @Deprecated("Use fileDestination with (Request, Response) -> File")
-    fun destination(destination: LegacyDestinationCallback) =
-        fileDestination { response: Response, request: Request -> destination(response, request.url) }
-
     /**
      * Set the destination callback
      *

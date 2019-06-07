@@ -3,25 +3,16 @@ package com.github.kittinunf.fuel.core.requests
 import com.github.kittinunf.fuel.core.Body
 import com.github.kittinunf.fuel.core.BodyLength
 import com.github.kittinunf.fuel.core.BodySource
-import com.github.kittinunf.fuel.core.Handler
 import com.github.kittinunf.fuel.core.HeaderValues
 import com.github.kittinunf.fuel.core.Headers
-import com.github.kittinunf.fuel.core.InterruptCallback
 import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.Parameters
 import com.github.kittinunf.fuel.core.ProgressCallback
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.RequestExecutionOptions
 import com.github.kittinunf.fuel.core.RequestFeatures
-import com.github.kittinunf.fuel.core.ResponseDeserializable
-import com.github.kittinunf.fuel.core.ResponseHandler
-import com.github.kittinunf.fuel.core.ResponseResultHandler
 import com.github.kittinunf.fuel.core.ResponseValidator
-import com.github.kittinunf.fuel.core.ResultHandler
 import com.github.kittinunf.fuel.core.Tags
-import com.github.kittinunf.fuel.core.deserializers.ByteArrayDeserializer
-import com.github.kittinunf.fuel.core.deserializers.StringDeserializer
-import com.github.kittinunf.fuel.core.response
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -311,17 +302,6 @@ data class DefaultRequest(
     }
 
     /**
-     * Add a [InterruptCallback] to the [RequestExecutionOptions]
-     *
-     * @see RequestExecutionOptions.interruptCallbacks
-     *
-     * @return self
-     */
-    override fun interrupt(interrupt: InterruptCallback) = request.also {
-        it.executionOptions.interruptCallbacks.plusAssign(interrupt)
-    }
-
-    /**
      * Overwrite the [Request] [timeout] in milliseconds
      *
      * @note [com.github.kittinunf.fuel.core.Client] must implement this behaviour
@@ -409,7 +389,8 @@ data class DefaultRequest(
      * @param clazz [KClass]
      * @return [Any] previously attached tag if any, null otherwise
      */
-    override fun <T : Any> getTag(clazz: KClass<T>) = tags[clazz] as? T
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> getTag(clazz: KClass<T>) = tags[clazz] as T
 
     override val request: Request get() = this
 
@@ -429,63 +410,4 @@ data class DefaultRequest(
         val appendHeaderWithValue = { key: String, value: String -> appendln("$key : $value") }
         headers.transformIterate(appendHeaderWithValue)
     }
-
-    override fun response(handler: ResponseResultHandler<ByteArray>) =
-        response(ByteArrayDeserializer(), handler)
-
-    override fun response(handler: ResultHandler<ByteArray>) =
-        response(ByteArrayDeserializer(), handler)
-
-    override fun response(handler: ResponseHandler<ByteArray>) =
-        response(ByteArrayDeserializer(), handler)
-
-    override fun response(handler: Handler<ByteArray>) =
-        response(ByteArrayDeserializer(), handler)
-
-    override fun response() =
-        response(ByteArrayDeserializer())
-
-    override fun responseString(charset: Charset, handler: ResponseResultHandler<String>) =
-        response(StringDeserializer(charset), handler)
-
-    override fun responseString(handler: ResponseResultHandler<String>) =
-        responseString(Charsets.UTF_8, handler)
-
-    override fun responseString(charset: Charset, handler: ResultHandler<String>) =
-        response(StringDeserializer(charset), handler)
-
-    override fun responseString(handler: ResultHandler<String>) =
-        responseString(Charsets.UTF_8, handler)
-
-    override fun responseString(charset: Charset, handler: ResponseHandler<String>) =
-        response(StringDeserializer(charset), handler)
-
-    override fun responseString(handler: ResponseHandler<String>) =
-        response(StringDeserializer(), handler)
-
-    override fun responseString(charset: Charset, handler: Handler<String>) =
-        response(StringDeserializer(charset), handler)
-
-    override fun responseString(handler: Handler<String>) =
-        response(StringDeserializer(), handler)
-
-    override fun responseString(charset: Charset) =
-        response(StringDeserializer(charset))
-
-    override fun responseString() = response(StringDeserializer(Charsets.UTF_8))
-
-    override fun <T : Any> responseObject(deserializer: ResponseDeserializable<T>, handler: ResponseResultHandler<T>) =
-        response(deserializer, handler)
-
-    override fun <T : Any> responseObject(deserializer: ResponseDeserializable<T>, handler: ResultHandler<T>) =
-        response(deserializer, handler)
-
-    override fun <T : Any> responseObject(deserializer: ResponseDeserializable<T>, handler: ResponseHandler<T>) =
-        response(deserializer, handler)
-
-    override fun <T : Any> responseObject(deserializer: ResponseDeserializable<T>, handler: Handler<T>) =
-        response(deserializer, handler)
-
-    override fun <T : Any> responseObject(deserializer: ResponseDeserializable<T>) =
-        response(deserializer)
 }
