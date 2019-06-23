@@ -74,7 +74,6 @@ subprojects {
         apply {
             plugin(Android.libPlugin)
             plugin(Kotlin.androidPlugin)
-            plugin(Kotlin.androidExtensionsPlugin)
         }
 
         configure<BaseExtension> {
