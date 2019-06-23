@@ -5,20 +5,9 @@ import com.github.kittinunf.result.Result
 import java.net.URL
 
 /**
- * Response object that holds [Request] and [Response] metadata, as well as the result T
- *
- * @see ResponseResultOf
- * @see ResponseHandler
+ * Response object that holds [Response] metadata, as well as a [Result] wrapping T or [FuelError]
  */
-typealias ResponseOf<T> = Triple<Request, Response, T>
-
-/**
- * Response object that holds [Request] and [Response] metadata, as well as a [Result] wrapping T or [FuelError]
- *
- * @see ResponseOf
- * @see ResponseResultHandler
- */
-typealias ResponseResultOf<T> = Triple<Request, Response, Result<T, FuelError>>
+typealias ResponseResultOf<T> = Pair<Response, Result<T, FuelError>>
 
 data class Response(
     val url: URL,

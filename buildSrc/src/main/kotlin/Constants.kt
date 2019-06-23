@@ -47,11 +47,12 @@ object Fuel {
 
 // Core dependencies
 object Kotlin {
-    const val version = "1.3.31"
+    const val version = "1.3.40"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$version"
     const val plugin = "kotlin"
     const val androidPlugin = "kotlin-android"
     const val androidExtensionsPlugin = "kotlin-android-extensions"
+    const val testJunit = "org.jetbrains.kotlin:kotlin-test-junit:$version"
 }
 
 object Result {
@@ -68,21 +69,10 @@ object Android {
     const val version = "3.4.1"
     const val appPlugin = "com.android.application"
     const val libPlugin = "com.android.library"
-
-    object Arch {
-        const val version = "1.1.1"
-        const val testingCore = "android.arch.core:core-testing:$version"
-    }
 }
 
 object AndroidX {
-    val annotation = "androidx.annotation:annotation:1.1.0"
-    val appCompat = "androidx.appcompat:appcompat:1.0.2"
-
-    object Arch {
-        const val version = "2.0.0"
-        const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
-    }
+    const val appCompat = "androidx.appcompat:appcompat:1.0.2"
 
     object Espresso {
         const val version = "3.1.0"
@@ -118,12 +108,12 @@ object Jackson {
 object KotlinX {
     object Coroutines {
         const val version = "1.3.0-M1"
-        val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
-        val jvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
+        const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
+        const val jvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
     }
 
     object Serialization {
-        const val version = "0.11.0"
+        const val version = "0.11.1"
         const val dependency = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$version"
         const val plugin = "kotlinx-serialization"
     }
@@ -136,14 +126,8 @@ object Moshi {
 
 // Lint
 object Ktlint {
-    const val version = "1.24.0"
+    const val version = "1.26.0"
     const val plugin = "org.jmailen.kotlinter"
-}
-
-// Testing dependencies
-object JUnit {
-    const val version = "4.12"
-    const val dependency = "junit:junit:$version"
 }
 
 object MockServer {

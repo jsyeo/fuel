@@ -28,7 +28,8 @@ val projects = listOf(
     Fuel.KotlinSerialization.name,
     Fuel.Moshi.name,
     Fuel.Stetho.name,
-    Fuel.Test.name
+    Fuel.Test.name,
+    Fuel.Sample.name
 )
 
 include(*(projects.toTypedArray()))

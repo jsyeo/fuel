@@ -1,5 +1,7 @@
 package com.github.kittinunf.fuel.core
 
+import com.github.kittinunf.fuel.core.deserializers.ByteArrayDeserializer
+import com.github.kittinunf.fuel.core.deserializers.StringDeserializer
 import com.github.kittinunf.fuel.core.requests.DefaultBody
 import com.github.kittinunf.fuel.core.requests.suspendable
 import com.github.kittinunf.result.Result
@@ -8,6 +10,7 @@ import com.github.kittinunf.result.map
 import com.github.kittinunf.result.mapError
 import java.io.InputStream
 import java.io.Reader
+import java.nio.charset.Charset
 
 /**
  * Generic interface for [Response] deserialization.
@@ -88,46 +91,13 @@ interface ResponseDeserializable<out T : Any> : Deserializable<T> {
 }
 
 /**
- * Await [T] or throws [FuelError]
- * @return [T] the [T]
- */
-@Throws(FuelError::class)
-suspend fun <T : Any, U : Deserializable<T>> Request.await(deserializable: U): T {
-    val response = suspendable().await()
-    return runCatching { deserializable.deserialize(response) }
-        .onFailure { throw FuelError.wrap(it, response) }
-        .getOrThrow()
-}
-
-/**
- * Await [T] or [FuelError]
- * @return [ResponseOf<T>] the [Result] of [T]
- */
-@Throws(FuelError::class)
-suspend fun <T : Any, U : Deserializable<T>> Request.awaitResponse(deserializable: U): ResponseOf<T> {
-    val response = suspendable().await()
-    return runCatching { Triple(this, response, deserializable.deserialize(response)) }
-        .onFailure { throw FuelError.wrap(it, response) }
-        .getOrThrow()
-}
-
-/**
- * Await [T] or [FuelError]
- * @return [Result<T>] the [Result] of [T]
- */
-suspend fun <T : Any, U : Deserializable<T>> Request.awaitResult(deserializable: U): Result<T, FuelError> {
-    val initialResult = suspendable().awaitResult()
-    return serializeFor(initialResult, deserializable).map { (_, t) -> t }
-}
-
-/**
  * Await [T] or [FuelError]
  * @return [ResponseResultOf<T>] the [ResponseResultOf] of [T]
  */
 suspend fun <T : Any, U : Deserializable<T>> Request.awaitResponseResult(deserializable: U): ResponseResultOf<T> {
     val initialResult = suspendable().awaitResult()
     return serializeFor(initialResult, deserializable).let {
-            Triple(this,
+            Pair(
                 it.fold({ (response, _) -> response }, { error -> error.response }),
                 it.map { (_, t) -> t }
             )
@@ -137,3 +107,21 @@ suspend fun <T : Any, U : Deserializable<T>> Request.awaitResponseResult(deseria
 private fun <T : Any, U : Deserializable<T>> serializeFor(result: Result<Response, FuelError>, deserializable: U) =
     result.map { (it to deserializable.deserialize(it)) }
         .mapError <Pair<Response, T>, Exception, FuelError> { FuelError.wrap(it, result.getOrElse(Response.error())) }
+
+/***
+ * Awaits the response as a [ByteArray], with metadata
+ *
+ * @return [ResponseResultOf] [ByteArray]
+ */
+suspend inline fun Request.awaitByteArrayResponseResult(): ResponseResultOf<ByteArray> =
+    awaitResponseResult(ByteArrayDeserializer())
+
+/***
+ * Awaits the response as a [String], with metadata
+ *
+ * @param charset [Charset] the charset to use for the [String], defaulting to [Charsets.UTF_8]
+ *
+ * @return [ResponseResultOf] [String]
+ */
+suspend inline fun Request.awaitStringResponseResult(charset: Charset = Charsets.UTF_8): ResponseResultOf<String> =
+    awaitResponseResult(StringDeserializer(charset))

@@ -4,7 +4,6 @@ import com.github.kittinunf.fuel.core.Client.Hook
 import com.github.kittinunf.fuel.core.RequestFactory.PathStringConvertible
 import com.github.kittinunf.fuel.core.RequestFactory.RequestConvertible
 import com.github.kittinunf.fuel.core.interceptors.ParameterEncoder
-// import com.github.kittinunf.fuel.core.interceptors.redirectResponseInterceptor
 import com.github.kittinunf.fuel.core.requests.DownloadRequest
 import com.github.kittinunf.fuel.core.requests.UploadRequest
 import com.github.kittinunf.fuel.core.requests.download
@@ -39,10 +38,10 @@ class FuelManager : RequestFactory, RequestFactory.Convenience {
     var socketFactory: SSLSocketFactory by readWriteLazy {
         keystore?.let {
             val trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-            trustFactory.init(it)
+            trustFactory?.init(it)
             val sslContext = SSLContext.getInstance("SSL")
-            sslContext.init(null, trustFactory.trustManagers, null)
-            sslContext.socketFactory
+            sslContext?.init(null, trustFactory.trustManagers, null)
+            sslContext?.socketFactory
         } ?: HttpsURLConnection.getDefaultSSLSocketFactory()
     }
 

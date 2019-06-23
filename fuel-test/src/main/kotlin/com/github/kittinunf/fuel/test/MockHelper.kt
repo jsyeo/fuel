@@ -174,7 +174,7 @@ data class MockReflected(
     operator fun get(key: String) = headers[key]
 
     class Deserializer : ResponseDeserializable<MockReflected> {
-        override fun deserialize(content: String) = MockReflected.from(JSONObject(content))
+        override fun deserialize(content: String) = from(JSONObject(content))
     }
 
     companion object {

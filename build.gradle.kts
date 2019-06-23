@@ -1,17 +1,12 @@
 import com.android.build.gradle.BaseExtension
-import com.dicedmelon.gradle.jacoco.android.JacocoAndroidUnitTestReportExtension
 import org.gradle.api.publish.maven.MavenPom
-import org.jmailen.gradle.kotlinter.KotlinterExtension
-import org.jmailen.gradle.kotlinter.support.ReporterType
-import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 plugins {
     java
     kotlin("jvm") version Kotlin.version apply false
     id(Android.libPlugin) version Android.version apply false
-    id(Jacoco.Android.plugin) version Jacoco.Android.version apply false
     id(KotlinX.Serialization.plugin) version Kotlin.version apply false
-    id(Ktlint.plugin) version Ktlint.version apply false
+    //id(Ktlint.plugin) version Ktlint.version apply false
 
     `maven-publish`
     id(Release.Bintray.plugin) version Release.Bintray.version
@@ -130,29 +125,23 @@ subprojects {
                 classpath += configurations.compile
             }
         }
-
-        configure<JacocoAndroidUnitTestReportExtension> {
-            csv.enabled(false)
-            html.enabled(true)
-            xml.enabled(true)
-        }
     }
 
     if (!isSample) {
         apply {
             plugin(Release.MavenPublish.plugin)
             plugin(Release.Bintray.plugin)
-            plugin(Ktlint.plugin)
+            //plugin(Ktlint.plugin)
         }
 
-        configure<KotlinterExtension> {
+        /*configure<KotlinterExtension> {
             reporters = arrayOf(ReporterType.plain.name, ReporterType.checkstyle.name)
-        }
+        }*/
 
         dependencies {
             implementation(Kotlin.stdlib)
 
-            testImplementation(JUnit.dependency)
+            testImplementation(Kotlin.testJunit)
         }
 
         if (!isTest) {
