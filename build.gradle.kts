@@ -75,7 +75,6 @@ subprojects {
             plugin(Android.libPlugin)
             plugin(Kotlin.androidPlugin)
             plugin(Kotlin.androidExtensionsPlugin)
-            plugin(Jacoco.Android.plugin)
         }
 
         configure<BaseExtension> {
