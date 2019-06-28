@@ -54,11 +54,6 @@ class SuspendableRequest private constructor(private val wrapped: Request) : Req
             .getOrThrow()
     }
 
-    @Throws(FuelError::class)
-    suspend fun await(): Response {
-        return awaitResult().get()
-    }
-
     companion object {
         private val FEATURE = SuspendableRequest::class.java.canonicalName
         fun enableFor(request: Request): SuspendableRequest {

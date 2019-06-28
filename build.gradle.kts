@@ -53,7 +53,7 @@ subprojects {
 
         tasks.withType<JacocoReport> {
             reports {
-                html.isEnabled = false
+                html.isEnabled = true
                 xml.isEnabled = true
                 csv.isEnabled = false
             }
@@ -140,6 +140,7 @@ subprojects {
             implementation(Kotlin.stdlib)
 
             testImplementation(Kotlin.testJunit)
+            testImplementation(KotlinX.Coroutines.jvm)
         }
 
         if (!isTest) {

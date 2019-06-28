@@ -107,7 +107,7 @@ object Jackson {
 
 object KotlinX {
     object Coroutines {
-        const val version = "1.3.0-M1"
+        const val version = "1.3.0-M2"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
         const val jvm = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
     }
@@ -138,16 +138,6 @@ object MockServer {
 object Jacoco {
     const val version = "0.8.4"
     const val plugin = "jacoco"
-
-    object Android {
-        const val version = "0.1.4"
-        const val plugin = "jacoco-android"
-    }
-}
-
-object RoboElectric {
-    const val version = "4.2.1"
-    const val dependency = "org.robolectric:robolectric:$version"
 }
 
 object Release {
