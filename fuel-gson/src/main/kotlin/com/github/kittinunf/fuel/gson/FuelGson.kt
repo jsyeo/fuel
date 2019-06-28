@@ -23,7 +23,7 @@ suspend inline fun <reified T : Any> Request.awaitResponseResultObject() =
  * @param gson [Gson] custom Gson deserializer instance
  * @return [Pair<Response, Result<T, FuelError>>] the deserialized result
  */
-Suspend inline fun <reified T : Any> Request.responseObject(gson: Gson) =
+suspend inline fun <reified T : Any> Request.responseObject(gson: Gson) =
     awaitResponseResult(gsonDeserializer<T>(gson))
 
 /**
