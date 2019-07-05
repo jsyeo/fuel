@@ -197,8 +197,7 @@ data class MockReflected(
                                     if (queryObject.isNull(parameter)) {
                                         query.plus(Pair(parameter, null))
                                     } else {
-                                        val values = queryObject.get(parameter)
-                                        when (values) {
+                                        when (val values = queryObject.get(parameter)) {
                                             is JSONArray -> query.plus(Pair(parameter, values.toList()))
                                             else -> query.plus(Pair(parameter, values.toString()))
                                         }

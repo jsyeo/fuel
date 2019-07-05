@@ -12,7 +12,7 @@ class FuelJson(private val content: String) {
     fun array(): JSONArray = JSONArray(content)
 }
 
-suspend fun Request.responseJson() = awaitResponseResult(jsonDeserializer())
+suspend fun Request.awaitResponseResultJson() = awaitResponseResult(jsonDeserializer())
 
 fun jsonDeserializer() = object : ResponseDeserializable<FuelJson> {
     override fun deserialize(response: Response): FuelJson = FuelJson(String(response.data))

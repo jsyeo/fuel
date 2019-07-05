@@ -23,7 +23,7 @@ suspend inline fun <reified T : Any> Request.awaitResponseResultObject() =
  * @param gson [Gson] custom Gson deserializer instance
  * @return [Pair<Response, Result<T, FuelError>>] the deserialized result
  */
-suspend inline fun <reified T : Any> Request.responseObject(gson: Gson) =
+suspend inline fun <reified T : Any> Request.awaitResponseResultObject(gson: Gson) =
     awaitResponseResult(gsonDeserializer<T>(gson))
 
 /**
@@ -31,7 +31,7 @@ suspend inline fun <reified T : Any> Request.responseObject(gson: Gson) =
  *
  * @return [ResponseDeserializable<T>] the deserializer
  */
-inline fun <reified T : Any> gsonDeserializerOf(clazz: Class<T>) = gsonDeserializer<T>()
+inline fun <reified T : Any> gsonDeserializerOf() = gsonDeserializer<T>()
 
 inline fun <reified T : Any> gsonDeserializer(gson: Gson = Gson()) = object : ResponseDeserializable<T> {
     override fun deserialize(reader: Reader): T? = gson.fromJson<T>(reader, object : TypeToken<T>() {}.type)

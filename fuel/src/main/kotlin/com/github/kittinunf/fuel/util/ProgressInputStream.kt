@@ -2,6 +2,7 @@ package com.github.kittinunf.fuel.util
 
 import java.io.FilterInputStream
 import java.io.InputStream
+import kotlin.math.max
 
 typealias ReadProgress = (Long) -> Unit
 
@@ -42,9 +43,9 @@ class ProgressInputStream(stream: InputStream, val onProgress: ReadProgress) : F
     // This means that the amount of times the progress is reported, ties exactly into the number of times the `read`
     // function is called, instead of relying on some arbitrary, but fake, progress.
     //
-    override fun read(b: ByteArray?, off: Int, len: Int): Int {
+    override fun read(b: ByteArray, off: Int, len: Int): Int {
         return super.read(b, off, len).apply {
-            position += Math.max(this, 0)
+            position += max(this, 0)
             onProgress.invoke(position)
         }
     }

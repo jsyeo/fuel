@@ -47,7 +47,7 @@ object Fuel {
 
 // Core dependencies
 object Kotlin {
-    const val version = "1.3.40"
+    const val version = "1.3.41"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$version"
     const val plugin = "kotlin"
     const val androidPlugin = "kotlin-android"
