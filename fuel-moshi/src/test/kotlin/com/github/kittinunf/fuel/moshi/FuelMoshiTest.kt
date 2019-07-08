@@ -14,11 +14,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.hamcrest.CoreMatchers.isA
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThat
-import org.junit.Test
 import java.net.HttpURLConnection
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class FuelMoshiTest : MockHttpTestCase() {
     data class HttpBinUserAgentModel(var userAgent: String = "")
@@ -50,7 +51,7 @@ class FuelMoshiTest : MockHttpTestCase() {
         assertThat(pair.second.component2(), isA(FuelError::class.java))
     }
 
-    data class IssueInfo(val id: Int, val title: String, val number: Int)
+    data class IssueInfo(val id: Int, val title: String, val number: Int?)
 
     @Test
     fun `processing generic list`() = runBlocking {
@@ -62,11 +63,12 @@ class FuelMoshiTest : MockHttpTestCase() {
                         " ]").withStatusCode(HttpURLConnection.HTTP_OK)
         )
         val (_, result) = withContext(Dispatchers.IO) {
-            Fuel.get(mock.path("issues")).awaitResponseResultObject<List<IssueInfo>>()
+            Fuel.get(mock.path("issues")).awaitResponseResultObjects<IssueInfo>()
         }
-        val issues = result.get()
-        assertEquals(issues.size, 2)
-        //TODO: some how Instance Of doesn't work here
+        val (issues, error) = result
+        assertNull(error)
+        assertEquals(issues?.size, 2)
+        assertThat(issues?.get(0), isA(IssueInfo::class.java))
     }
 
     enum class Stage {
@@ -80,9 +82,7 @@ class FuelMoshiTest : MockHttpTestCase() {
 
     class StageMoshiAdapter : JsonAdapter<Stage>() {
         override fun fromJson(reader: JsonReader): Stage? {
-            val value = reader.nextString()
-
-            return when (value) {
+            return when (reader.nextString()) {
                 "na" -> Stage.UNKNOWN
                 "in_progress" -> Stage.IN_PROGRESS
                 "finished" -> Stage.FINISHED
@@ -95,7 +95,7 @@ class FuelMoshiTest : MockHttpTestCase() {
     }
 
     @Test
-    fun `custom adapter sucesss`() = runBlocking {
+    fun `custom adapter success`() = runBlocking {
         defaultMoshi.add(TypeToken.of(Stage::class.java).type, StageMoshiAdapter())
 
         mock.apply {

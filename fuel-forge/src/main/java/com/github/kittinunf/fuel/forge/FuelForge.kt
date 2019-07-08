@@ -13,8 +13,10 @@ suspend inline fun <reified T : Any> Request.awaitResponseResultObject(noinline 
 suspend inline fun <reified T : Any> Request.awaitResponseResultObjects(noinline deserializer: JSON.() -> DeserializedResult<T>) =
     awaitResponseResult(forgesDeserializerOf(deserializer))
 
-fun <T : Any> forgeDeserializerOf(deserializer: JSON.() -> DeserializedResult<T>) = object : ResponseDeserializable<T> {
-    override fun deserialize(content: String): T? = Forge.modelFromJson(content, deserializer).component1()
+fun <T : Any> forgeDeserializerOf(deserializer: JSON.() -> DeserializedResult<T>) =
+        object : ResponseDeserializable<T> {
+            override fun deserialize(content: String): T? =
+                    Forge.modelFromJson(content, deserializer).component1()
 }
 
 fun <T : Any> forgesDeserializerOf(deserializer: JSON.() -> DeserializedResult<T>) =

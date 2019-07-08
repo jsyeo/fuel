@@ -13,22 +13,43 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.hamcrest.CoreMatchers.isA
 import org.json.JSONException
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThat
-import org.junit.Test
 import java.net.HttpURLConnection
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.Test
 
-// TODO: Needs to Test on awaitResponseResultObject()
 class FuelForgeTest : MockHttpTestCase() {
+    data class HttpBinUserAgentModel(val userAgent: String, val status: Int)
     data class IssueInfo(val id: Int, val title: String, val number: Int?)
+
+    private val httpBinUserDeserializer = { json: JSON ->
+        ::HttpBinUserAgentModel.create
+                .map(json at "userAgent")
+                .apply(json at "status")
+    }
 
     private val issueInfoDeserializer = { json: JSON ->
         ::IssueInfo.create
             .map(json at "id")
             .apply(json at "title")
             .apply(json maybeAt "number")
+    }
+
+    @Test
+    fun `check HttpBin User Agent for non null`() = runBlocking {
+        mock.chain(
+                request = mock.request().withPath("/user-agent"),
+                response = mock.reflect()
+        )
+        val (response, result) = withContext(Dispatchers.IO) {
+            Fuel.get(mock.path("user-agent")).awaitResponseResultObject(httpBinUserDeserializer)
+        }
+        assertNotNull(response)
+        assertNotNull(result.component1()) //TODO: Some how, it caused Default ResponseDeserializable Errors
+        assertEquals(result.component1()?.status, 200)
+        assertNull(result.component2())
     }
 
     @Test
@@ -73,7 +94,7 @@ class FuelForgeTest : MockHttpTestCase() {
        val content = """ { "id": 123, "title": "title1", "number": 1 } """
        val issue = forgeDeserializerOf(issueInfoDeserializer).deserialize(content)
        assertNotNull(issue)
-       assertEquals(issue?.id, 123)
+       assertEquals(issue.id, 123)
     }
 
     @Test(expected = JSONException::class)
@@ -95,7 +116,7 @@ class FuelForgeTest : MockHttpTestCase() {
 
         val issues = forgesDeserializerOf(issueInfoDeserializer).deserialize(content)
         assertNotNull(issues)
-        assertEquals(issues?.size, 2)
-        assertEquals(issues?.first()?.id, 123)
+        assertEquals(issues.size, 2)
+        assertEquals(issues.first().id, 123)
     }
 }

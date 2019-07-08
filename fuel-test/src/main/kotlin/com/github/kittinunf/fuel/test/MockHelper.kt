@@ -140,7 +140,6 @@ class MockHelper {
     companion object {
         const val REFLECT_TEMPLATE = """
             return {
-                'statusCode': 200,
                 'headers': {
                     'Date' : [ Date() ],
                     'Content-Type' : [ 'application/json' ],
@@ -154,6 +153,7 @@ class MockHelper {
                         body: request.body,
                         headers: request.headers,
                         reflect: true,
+                        status: 200,
                         userAgent: (request.headers['user-agent'] || request.headers['User-Agent'] || [])[0]                    }
                 )
             };
