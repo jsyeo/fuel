@@ -196,7 +196,7 @@ class DownloadRequestTest : MockHttpTestCase() {
         assertNotNull(error, "Expected error, actual $data")
 
         val statusCode = 200
-        assertThat(error?.exception as IOException, isA(IOException::class.java))
+        assertThat(error.exception as IOException, isA(IOException::class.java))
         assertEquals(response.statusCode, statusCode)
     }
 

@@ -12,6 +12,7 @@ import com.github.kittinunf.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.isA
 import org.json.JSONException
 import org.junit.Assert.assertThat
@@ -63,7 +64,7 @@ class FuelForgeTest : MockHttpTestCase() {
             Fuel.get(mock.path("user-agent")).awaitResponseResultObject(httpBinUserDeserializer)
         }
         assertNotNull(result.component1())
-        assertThat(result.component2(), isA(Result.Failure::class.java))
+        assertThat(result.component2(), instanceOf(Result.Failure::class.java))
     }
 
     @Test
