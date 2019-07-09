@@ -8,6 +8,7 @@ import com.github.kittinunf.forge.core.maybeAt
 import com.github.kittinunf.forge.util.create
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.test.MockHttpTestCase
+import com.github.kittinunf.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
