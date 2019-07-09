@@ -40,16 +40,29 @@ class FuelForgeTest : MockHttpTestCase() {
     @Test
     fun `check HttpBin User Agent for non null`() = runBlocking {
         mock.chain(
-                request = mock.request().withPath("/user-agent"),
-                response = mock.reflect()
+            request = mock.request().withPath("/user-agent"),
+            response = mock.reflect()
         )
         val (response, result) = withContext(Dispatchers.IO) {
             Fuel.get(mock.path("user-agent")).awaitResponseResultObject(httpBinUserDeserializer)
         }
         assertNotNull(response)
-        assertNotNull(result.component1()) //TODO: Some how, it caused Default ResponseDeserializable Errors
+        assertNotNull(result.component1())
         assertEquals(result.component1()?.status, 200)
         assertNull(result.component2())
+    }
+
+    @Test
+    fun `HttpBin to throw HTTP Bad Requests`() = runBlocking {
+        mock.chain(
+            request = mock.request().withPath("/user-agent"),
+            response = mock.response().withStatusCode(HttpURLConnection.HTTP_BAD_REQUEST)
+        )
+        val (_, result) = withContext(Dispatchers.IO) {
+            Fuel.get(mock.path("user-agent")).awaitResponseResultObject(httpBinUserDeserializer)
+        }
+        assertNotNull(result.component1())
+        assertThat(result.component2(), isA(Result.Failure::class.java))
     }
 
     @Test

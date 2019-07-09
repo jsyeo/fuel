@@ -11,10 +11,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import com.google.common.net.MediaType
 import org.hamcrest.core.Is.isA
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThat
-import org.junit.Test
 import org.mockserver.model.BinaryBody
 import org.mockserver.model.Delay
 import java.io.ByteArrayInputStream
@@ -23,15 +20,18 @@ import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.util.Random
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.Test
 
 class DownloadRequestTest : MockHttpTestCase() {
 
     private fun <T : Any> assertDownloadedBytesToFile(result: ResponseResultOf<T>, file: File, numberOfBytes: Int): ResponseResultOf<T> {
         val (response, wrapped) = result
         val (data, error) = wrapped
-        assertNotNull("Expected response to not be null", response)
-        assertNotNull("Expected data, actual $error", data)
-        assertEquals("Expected file length ${file.length()} to match $numberOfBytes", file.length(), numberOfBytes.toLong())
+        assertNotNull(response, "Expected response to not be null")
+        assertNotNull(data, "Expected data, actual $error")
+        assertEquals(file.length(), numberOfBytes.toLong(), "Expected file length ${file.length()} to match $numberOfBytes")
         assertEquals(response.statusCode, HttpURLConnection.HTTP_OK)
         return result
     }
@@ -78,9 +78,9 @@ class DownloadRequestTest : MockHttpTestCase() {
                 .awaitByteArrayResponseResult()
         }
         val (data, error) = wrapped
-        assertNotNull("Expected response to not be null", response)
-        assertNotNull("Expected data, actual $error", data)
-        assertEquals("Expected stream output length ${stream.size()} to match $numberOfBytes", stream.size(), numberOfBytes)
+        assertNotNull(response, "Expected response to not be null")
+        assertNotNull(data, "Expected data, actual $error")
+        assertEquals(stream.size(), numberOfBytes, "Expected stream output length ${stream.size()} to match $numberOfBytes")
         assertEquals(response.statusCode, HttpURLConnection.HTTP_OK)
     }
 
@@ -112,10 +112,7 @@ class DownloadRequestTest : MockHttpTestCase() {
 
         assertThat(data, isA(ByteArray::class.java))
         assertEquals(data!!.size.toLong(), read)
-        assertEquals("Progress read bytes and total bytes should be equal",
-            read == total && read != -1L && total != -1L,
-            true
-        )
+        assertEquals(read == total && read != -1L && total != -1L, true, "Progress read bytes and total bytes should be equal")
     }
 
     @Test
@@ -145,11 +142,7 @@ class DownloadRequestTest : MockHttpTestCase() {
 
         assertThat(data, isA(String::class.java))
         assertEquals(data, file.readText())
-        assertEquals(
-            "Progress read bytes and total bytes should be equal",
-            read == total && read != -1L && total != -1L,
-            true
-        )
+        assertEquals(read == total && read != -1L && total != -1L, true, "Progress read bytes and total bytes should be equal")
     }
 
     @Test
@@ -172,9 +165,9 @@ class DownloadRequestTest : MockHttpTestCase() {
         }
         val (data, error) = result
 
-        assertNotNull("Expected response to not be null", response)
-        assertNotNull("Expected error, actual $data", error)
-        assertEquals("Expected nothing to be written to file", file.length(), 0L)
+        assertNotNull(response, "Expected response to not be null")
+        assertNotNull(error, "Expected error, actual $data")
+        assertEquals(file.length(), 0L, "Expected nothing to be written to file")
 
         val statusCode = HttpURLConnection.HTTP_NOT_FOUND
         assertEquals(response.statusCode, statusCode)
@@ -199,8 +192,8 @@ class DownloadRequestTest : MockHttpTestCase() {
         }
         val (data, error) = result
 
-        assertNotNull("Expected response to not be null", response)
-        assertNotNull("Expected error, actual $data", error)
+        assertNotNull(response, "Expected response to not be null")
+        assertNotNull(error, "Expected error, actual $data")
 
         val statusCode = 200
         assertThat(error?.exception as IOException, isA(IOException::class.java))
@@ -231,9 +224,6 @@ class DownloadRequestTest : MockHttpTestCase() {
         }
 
         assertDownloadedBytesToFile(triple, file, numberOfBytes)
-        assertEquals("Progress read bytes and total bytes should be equal",
-            read == total && read != -1L && total != -1L,
-            true
-        )
+        assertEquals(read == total && read != -1L && total != -1L, true, "Progress read bytes and total bytes should be equal")
     }
 }
