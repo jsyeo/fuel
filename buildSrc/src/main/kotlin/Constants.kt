@@ -3,7 +3,7 @@ object Fuel {
     const val publishVersion = "3.0.0"
     const val groupId = "com.github.kittinunf.fuel"
 
-    const val compileSdkVersion = 28
+    const val compileSdkVersion = 29
     const val minSdkVersion = 19
 
     const val name = ":fuel"
@@ -66,7 +66,7 @@ object Json {
 }
 
 object Android {
-    const val version = "3.4.1"
+    const val version = "3.4.2"
     const val appPlugin = "com.android.application"
     const val libPlugin = "com.android.library"
 }
@@ -75,7 +75,7 @@ object AndroidX {
     const val appCompat = "androidx.appcompat:appcompat:1.0.2"
 
     object Espresso {
-        const val version = "3.1.0"
+        const val version = "3.2.0"
         const val core = "androidx.test.espresso:espresso-core:$version"
         const val intents = "androidx.test.espresso:espresso-intents:$version"
     }
@@ -91,7 +91,7 @@ object AndroidX {
 
 // Modules dependencies
 object Forge {
-    const val version = "0.3.0"
+    const val version = "1.0.0-alpha2"
     const val dependency = "com.github.kittinunf.forge:forge:$version"
 }
 

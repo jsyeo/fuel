@@ -14,10 +14,13 @@ suspend inline fun <reified T : Any> Request.awaitResponseResultObjects(noinline
     awaitResponseResult(forgesDeserializerOf(deserializer))
 
 fun <T : Any> forgeDeserializerOf(deserializer: JSON.() -> DeserializedResult<T>) =
-        object : ResponseDeserializable<T> {
-            override fun deserialize(content: String): T? =
-                    Forge.modelFromJson(content, deserializer).component1()
-}
+    object : ResponseDeserializable<T> {
+        override fun deserialize(content: String): T? =
+            when (val result = Forge.modelFromJson(content, deserializer)) {
+                is DeserializedResult.Success -> { result.value }
+                is DeserializedResult.Failure -> throw result.error
+            }
+    }
 
 fun <T : Any> forgesDeserializerOf(deserializer: JSON.() -> DeserializedResult<T>) =
     object : ResponseDeserializable<List<T>> {

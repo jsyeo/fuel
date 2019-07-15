@@ -7,12 +7,12 @@ import com.github.kittinunf.forge.core.map
 import com.github.kittinunf.forge.core.maybeAt
 import com.github.kittinunf.forge.util.create
 import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.HttpException
 import com.github.kittinunf.fuel.test.MockHttpTestCase
 import com.github.kittinunf.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.isA
 import org.json.JSONException
 import org.junit.Assert.assertThat
@@ -54,7 +54,7 @@ class FuelForgeTest : MockHttpTestCase() {
         assertNull(result.component2())
     }
 
-    /*@Test
+    @Test
     fun `HttpBin to throw HTTP Bad Requests`() = runBlocking {
         mock.chain(
             request = mock.request().withPath("/user-agent"),
@@ -63,10 +63,12 @@ class FuelForgeTest : MockHttpTestCase() {
         val (_, result) = withContext(Dispatchers.IO) {
             Fuel.get(mock.path("user-agent")).awaitResponseResultObject(httpBinUserDeserializer)
         }
-        TODO: Why result is null for this?
-        assertNotNull(result.component1())
-        assertThat(result.component2(), instanceOf(Result.Failure::class.java))
-    }*/
+        val (data, error) = result
+
+        assertNull(data)
+        assertNotNull(error)
+        assertThat(error.exception as? HttpException, isA(HttpException::class.java))
+    }
 
     @Test
     fun `multiple issues objects with size and class`() = runBlocking {
