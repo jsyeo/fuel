@@ -1,5 +1,7 @@
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.publish.maven.MavenPom
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     java
@@ -92,8 +94,8 @@ subprojects {
             }
 
             compileOptions {
-                setSourceCompatibility(JavaVersion.VERSION_1_7)
-                setTargetCompatibility(JavaVersion.VERSION_1_7)
+                sourceCompatibility = JavaVersion.VERSION_1_7
+                targetCompatibility = JavaVersion.VERSION_1_7
             }
 
             buildTypes {
@@ -136,6 +138,14 @@ subprojects {
             reporters = arrayOf(ReporterType.plain.name, ReporterType.checkstyle.name)
         }*/
 
+        tasks.withType<Test> {
+            testLogging {
+                // set options for log level LIFECYCLE
+                events = mutableSetOf(TestLogEvent.FAILED)
+                exceptionFormat = TestExceptionFormat.FULL
+            }
+        }
+
         dependencies {
             implementation(Kotlin.stdlib)
 
@@ -166,7 +176,7 @@ subprojects {
 
             fun MavenPom.addDependencies() = withXml {
                 asNode().appendNode("dependencies").let { depNode ->
-                    configurations.implementation.allDependencies.forEach {
+                    configurations.implementation.get().allDependencies.forEach {
                         depNode.appendNode("dependency").apply {
                             appendNode("groupId", it.group)
                             appendNode("artifactId", it.name)

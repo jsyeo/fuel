@@ -8,9 +8,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.URL
 
-typealias LegacyDestinationCallback = (Response, URL) -> File
 typealias FileDestinationCallback = (Response, Request) -> File
 typealias StreamDestinationCallback = (Response, Request) -> Pair<OutputStream, DestinationAsStreamCallback>
 typealias DestinationAsStreamCallback = () -> InputStream
